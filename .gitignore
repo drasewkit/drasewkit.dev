@@ -10,3 +10,6 @@ dist/
 .env.*
 
 .DS_Store
+
+# wrangler types で生成する
+worker-configuration.d.ts

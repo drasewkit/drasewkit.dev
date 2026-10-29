@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "drasewkit-dev",
+  "main": "api/src/index.ts",
+  "compatibility_date": "2026-10-29",
+  "upload_source_maps": true,
+  "assets": {
+    // Astro のサイトができたら ./site/dist に差し替える
+    "directory": "./site/placeholder",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    // /api/* だけ静的アセットより先に Worker（Hono）で処理する
+    "run_worker_first": ["/api/*"]
+  }
+}
