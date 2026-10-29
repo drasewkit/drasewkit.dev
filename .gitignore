@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.wrangler/
+.astro/
+
+# シークレット
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+
+.DS_Store
