@@ -9,5 +9,5 @@
     "lib": ["ESNext"],
     "types": ["./worker-configuration.d.ts"]
   },
-  "include": ["api/src/**/*.ts", "worker-configuration.d.ts"]
+  "include": ["api/**/*.ts", "worker-configuration.d.ts"]
 }

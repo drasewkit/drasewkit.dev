@@ -19,6 +19,8 @@ Cloudflare Workers 1つで動かします。
 npm install
 npm run dev        # http://localhost:8787
 npm run typecheck  # 型を生成してから tsc
+npm test           # Vitest（Workers ランタイム上で実行）
+npm run format     # Prettier
 ```
 
 ## API
@@ -29,9 +31,9 @@ npm run typecheck  # 型を生成してから tsc
 { "name": "名前", "email": "you@example.com", "message": "本文" }
 ```
 
-| ステータス | 内容 |
-| --- | --- |
-| 200 | `{ "ok": true }` |
-| 400 | JSON として読めない |
-| 413 | 本文が 16KB を超える |
-| 422 | 入力エラー。`errors` に項目ごとのメッセージ |
+| ステータス | 内容                                        |
+| ---------- | ------------------------------------------- |
+| 200        | `{ "ok": true }`                            |
+| 400        | JSON として読めない                         |
+| 413        | 本文が 16KB を超える                        |
+| 422        | 入力エラー。`errors` に項目ごとのメッセージ |

@@ -12,10 +12,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm install
 npm run dev        # wrangler dev（http://localhost:8787）
 npm run typecheck  # wrangler types で型を生成してから tsc --noEmit
+npm test           # Vitest（Workers ランタイム上で実行）
+npm test -- api/test/contact.test.ts  # 1ファイルだけ
+npm test -- -t '422'                  # テスト名で絞る
+npm run format     # Prettier（format:check で確認のみ）
 npm run deploy     # wrangler deploy
 ```
 
-- テストとリンターはまだない。変更後の確認は `npm run typecheck` と `npm run dev` での動作確認。
+- リンターはまだない。
+- `.claude/settings.json` の hooks で、編集したファイルは Prettier で自動整形され、応答を終える前に `tsc --noEmit` が走る。デプロイと `wrangler secret` は実行前に確認が入る。
 - `worker-configuration.d.ts`（`CloudflareBindings` の型）は `wrangler types` の生成物で gitignore 対象。`wrangler.jsonc` のバインディングを変えたら `npm run cf-typegen` で再生成する。
 - シークレットは `.dev.vars` に置く（gitignore 済み）。
 
@@ -35,6 +40,7 @@ npm run deploy     # wrangler deploy
 - 入力検証は `@hono/zod-validator` + Zod v4（`import * as z from 'zod'`）。検証エラーは 422 で `{ ok: false, errors: <項目ごとのメッセージ> }`（`z.flattenError(...).fieldErrors`）。
 - レスポンスは成功時 `{ ok: true }`、エラー時 `{ ok: false, error: string }` の形に揃える。`HTTPException`（壊れた JSON の 400 など）は `onError` でそのステータスのまま JSON にし、それ以外は 500。
 - API の仕様（ステータスと内容）は README.md の「API」節に表で書いている。API を変えたら README も更新する。
+- テストは API ごとに `api/test/<ルート名>.test.ts` を書き、README の表にあるステータスをすべて確かめる。`vitest.config.ts` の `@cloudflare/vitest-plugin` が `wrangler.jsonc` を読むので、テストからは `import { exports } from 'cloudflare:workers'` の `exports.default.fetch()` で、アセットの振り分けも含めた本番と同じ経路を通せる。
 
 ### 未実装
 
