@@ -1,16 +1,18 @@
 {
   "permissions": {
     "ask": [
-      "Bash(npm run deploy:*)",
-      "Bash(npx wrangler deploy:*)",
-      "Bash(wrangler deploy:*)",
-      "Bash(npx wrangler secret:*)",
-      "Bash(wrangler secret:*)"
+      "Bash(*npm* run* deploy*)",
+      "Bash(*wrangler* deploy*)",
+      "Bash(*wrangler* versions*)",
+      "Bash(*wrangler* rollback*)",
+      "Bash(*wrangler* delete*)",
+      "Bash(*wrangler* secret*)"
     ],
     "deny": [
-      "Read(./.dev.vars*)",
-      "Read(./.env*)",
-      "Edit(./worker-configuration.d.ts)"
+      "Read(//**/.dev.vars*)",
+      "Read(//**/.env*)",
+      "Bash(*.dev.vars*)",
+      "Edit(//**/worker-configuration.d.ts)"
     ]
   },
   "hooks": {

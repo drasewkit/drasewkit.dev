@@ -20,7 +20,8 @@ npm run deploy     # wrangler deploy
 ```
 
 - リンターはまだない。
-- `.claude/settings.json` の hooks で、編集したファイルは Prettier で自動整形され、応答を終える前に `tsc --noEmit` が走る。デプロイと `wrangler secret` は実行前に確認が入る。
+- `.claude/settings.json` の hooks で、編集したファイルは Prettier で自動整形され（整形できないときはエラーとして返る）、応答を終える前に `tsc --noEmit` が走る。`worker-configuration.d.ts` が無いか `wrangler.jsonc` より古いときは、先に `npm run cf-typegen` で作り直す。型エラーで止められたあと、再開しても直らなかったときは止めずにユーザーへ警告を出す。
+- デプロイ・`wrangler versions` / `rollback` / `delete` / `secret` は実行前に確認が入る。`.dev.vars*` と `.env*` は読み取り禁止。
 - `worker-configuration.d.ts`（`CloudflareBindings` の型）は `wrangler types` の生成物で gitignore 対象。`wrangler.jsonc` のバインディングを変えたら `npm run cf-typegen` で再生成する。
 - シークレットは `.dev.vars` に置く（gitignore 済み）。
 
