@@ -10,6 +10,6 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page",
     // /api/* だけ静的アセットより先に Worker（Hono）で処理する
-    "run_worker_first": ["/api/*"]
-  }
+    "run_worker_first": ["/api/*"],
+  },
 }

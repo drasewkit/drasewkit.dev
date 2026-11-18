@@ -6,7 +6,10 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
-    "typecheck": "npm run cf-typegen && tsc --noEmit"
+    "typecheck": "npm run cf-typegen && tsc --noEmit",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@hono/zod-validator": "^0.9.1",
@@ -14,7 +17,10 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.4.11",
+    "prettier": "^3.9.10",
     "typescript": "^7.0.2",
+    "vitest": "^4.1.12",
     "wrangler": "^4.155.0"
   }
 }
