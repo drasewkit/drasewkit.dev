@@ -20,7 +20,7 @@ describe('POST /api/contact', () => {
   it('JSON として読めなければ 400', async () => {
     const res = await post('{')
     expect(res.status).toBe(400)
-    expect(await res.json()).toMatchObject({ ok: false })
+    expect(await res.json()).toEqual({ ok: false, error: expect.any(String) })
   })
 
   it('本文が 16KB を超えたら 413', async () => {

@@ -20,8 +20,13 @@ npm run deploy     # wrangler deploy
 ```
 
 - リンターはまだない。
-- `.claude/settings.json` の hooks で、編集したファイルは Prettier で自動整形され（整形できないときはエラーとして返る）、応答を終える前に `tsc --noEmit` が走る。`worker-configuration.d.ts` が無いか `wrangler.jsonc` より古いときは、先に `npm run cf-typegen` で作り直す。型エラーで止められたあと、再開しても直らなかったときは止めずにユーザーへ警告を出す。
-- デプロイ・`wrangler versions` / `rollback` / `delete` / `secret` は実行前に確認が入る。`.dev.vars*` と `.env*` は読み取り禁止。
+- `.claude/settings.json` の hooks（`.claude/hooks/`）:
+  - Write / Edit で編集したファイルは Prettier で自動整形される（`post-edit.sh`）。整形できないとき（構文エラーなど）はエラーとして返る。
+  - その応答で型に関わるファイル（`*.ts`・`tsconfig.json`・`wrangler.jsonc`・`package.json`）を Write / Edit したときだけ、応答を終える前に `tsc --noEmit` が走る（`typecheck.sh`）。Bash での編集は対象外なので、そのときは `npm run typecheck` を自分で実行する。
+  - `worker-configuration.d.ts` が無いか、`wrangler.jsonc`・`.dev.vars`・`package-lock.json` などより古いときは、先に `npm run cf-typegen` で作り直す。
+  - 型エラーで止められたあと、再開しても直らなかったときは止めずにユーザーへ警告を出す。
+- デプロイ・`wrangler versions` / `rollback` / `delete` / `secret` は実行前に確認が入る。
+- `.dev.vars*` と `.env*` は Read ツールでの読み取りを禁止している。Bash は `.dev.vars` を名指しするコマンドを止めるだけで、完全には防げない。シークレットの中身は読まないこと。
 - `worker-configuration.d.ts`（`CloudflareBindings` の型）は `wrangler types` の生成物で gitignore 対象。`wrangler.jsonc` のバインディングを変えたら `npm run cf-typegen` で再生成する。
 - シークレットは `.dev.vars` に置く（gitignore 済み）。
 
@@ -41,7 +46,8 @@ npm run deploy     # wrangler deploy
 - 入力検証は `@hono/zod-validator` + Zod v4（`import * as z from 'zod'`）。検証エラーは 422 で `{ ok: false, errors: <項目ごとのメッセージ> }`（`z.flattenError(...).fieldErrors`）。
 - レスポンスは成功時 `{ ok: true }`、エラー時 `{ ok: false, error: string }` の形に揃える。`HTTPException`（壊れた JSON の 400 など）は `onError` でそのステータスのまま JSON にし、それ以外は 500。
 - API の仕様（ステータスと内容）は README.md の「API」節に表で書いている。API を変えたら README も更新する。
-- テストは API ごとに `api/test/<ルート名>.test.ts` を書き、README の表にあるステータスをすべて確かめる。`vitest.config.ts` の `@cloudflare/vitest-plugin` が `wrangler.jsonc` を読むので、テストからは `import { exports } from 'cloudflare:workers'` の `exports.default.fetch()` で、アセットの振り分けも含めた本番と同じ経路を通せる。
+- テストは API ごとに `api/test/<ルート名>.test.ts` を書き、README の表にあるステータスをすべて確かめる。`vitest.config.ts` の `@cloudflare/vitest-plugin` が `wrangler.jsonc` を読み、テストからは `import { exports } from 'cloudflare:workers'` の `exports.default.fetch()` で Worker を呼ぶ。
+- `exports.default.fetch()` は Worker を直接呼ぶので、静的アセットの振り分け（`run_worker_first` / `not_found_handling`）は通らない。振り分けの設定は `api/test/wrangler-config.test.ts` で `wrangler.jsonc` の中身を確かめている。設定を変えたらこのテストも直す。
 
 ### 未実装
 
